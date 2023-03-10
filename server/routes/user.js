@@ -8,9 +8,10 @@ import {
   like,
   dislike,
 } from "../controllers/UserController";
+import { verifyJWT } from "../utils/verifyJWT.js";
 const router = express.Router();
 //update user
-router.put("/:id", update);
+router.put("/:id", verifyJWT, update);
 
 //delete user
 router.delete("/:id", deleteUser);
