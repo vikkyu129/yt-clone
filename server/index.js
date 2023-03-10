@@ -1,9 +1,11 @@
-import express from "express";
+import express, { json } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import videoRoutes from "routes/video";
-import commentRoutes from "routes/comment";
-import userRoutes from "routes/user";
+import videoRoutes from "./routes/video";
+import commentRoutes from "./routes/comment";
+import userRoutes from "./routes/user";
+import authRoute from "./routes/auth";
+import cookieParser from "cookie-parser";
 const app = express();
 const PORT = 8800;
 dotenv.config();
@@ -20,8 +22,11 @@ const connect = () => {
       );
     });
 };
-
+app.use(cookieParser());
+// allow json files
+app.use(json());
 // routes
+app.use("/api/auth", authRoute);
 app.use("/api/users", userRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/comments", commentRoutes);
