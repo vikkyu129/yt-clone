@@ -1,11 +1,14 @@
-import User from "../models/User.js";
+import User from "../../../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 export async function signup(req, res, next) {
   try {
+    console.log("SignUp Function");
+    console.log(req.body);
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
     const newUser = new User({ ...req.body, password: hash });
+    console.log(newUser);
     await newUser.save();
     return res.status(200).send("User created Successfully.");
   } catch (err) {
