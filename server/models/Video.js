@@ -18,7 +18,7 @@ const videoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    videUrl: {
+    videoUrl: {
       type: String,
       required: true,
     },

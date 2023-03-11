@@ -14,20 +14,20 @@ const router = express.Router();
 router.put("/:id", verifyJWT, update);
 
 //delete user
-router.delete("/:id", deleteUser);
+router.delete("/:id", verifyJWT, deleteUser);
 
 //get a user
 router.get("/find/:id", getUser);
 
 //subscribe a user
-router.put("/sub/:id", subscribe);
+router.put("/sub/:id", verifyJWT, subscribe);
 
 //unsubscribe a user
-router.put("/unsub/:id", unsubscribe);
+router.put("/unsub/:id", verifyJWT, unsubscribe);
 
 //like a video
-router.put("/like/:videoId", like);
+router.put("/like/:videoId", verifyJWT, like);
 
 //dislike a video
-router.put("/dislike/:videoId", dislike);
+router.put("/dislike/:videoId", verifyJWT, dislike);
 export default router;
