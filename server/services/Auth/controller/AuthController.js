@@ -1,14 +1,51 @@
 import User from "../../../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
+// use redis here to store the refresh tokens
+let refreshTokensDb = [];
+
+export async function refresh(req, res, next) {
+  const { refresh_token: token } = req.cookies;
+  if (!token) {
+    return res.status(401).send("Invalid Token");
+  }
+  if (!refreshTokensDb.includes(token)) {
+    return res.status(401).send("Invalid Token");
+  }
+  jwt.verify(token, process.env.REFRESH_JWT_SECRET_TOKEN, (err, user) => {
+    // removing iat, as it is creating the same access_token everytime
+    delete user.iat;
+    if (err) {
+      return res.sendStatus(401);
+    }
+    let newAccessToken = generateAccessToken(user);
+    res.cookie("access_token", newAccessToken, {
+      httpOnly: true,
+    });
+    res.sendStatus(200);
+  });
+}
+export async function signout(req, res, next) {
+  const { refresh_token: token } = req.cookies;
+  if (!token) {
+    return res.sendStatus(403);
+  }
+  refreshTokensDb = refreshTokensDb.filter((tokenInDb) => tokenInDb !== token);
+  res.cookie("access_token", "", {
+    httpOnly: true,
+  });
+  res.cookie("refresh_token", "", {
+    httpOnly: true,
+  });
+  return res.sendStatus("200");
+}
+
 export async function signup(req, res, next) {
   try {
-    console.log("SignUp Function");
-    console.log(req.body);
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
     const newUser = new User({ ...req.body, password: hash });
-    console.log(newUser);
     await newUser.save();
     return res.status(200).send("User created Successfully.");
   } catch (err) {
@@ -30,15 +67,24 @@ export async function signin(req, res, next) {
     if (!correctPass) {
       return res.status(404).send("Wrong username/password");
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_TOKEN);
+    const accessToken = generateAccessToken({ id: user._id });
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.REFRESH_JWT_SECRET_TOKEN
+    );
+    refreshTokensDb.push(refreshToken);
     const { password, ...filteredUser } = user._doc;
-    return res
-      .cookie("access_token", token, {
-        httpOnly: true,
-      })
-      .status(200)
-      .json(filteredUser);
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+    });
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+    });
+    res.status(200).json(filteredUser);
   } catch (e) {
     return res.status(503).send(e);
   }
+}
+function generateAccessToken(payload) {
+  return jwt.sign(payload, process.env.JWT_SECRET_TOKEN, { expiresIn: "15s" });
 }

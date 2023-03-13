@@ -21,7 +21,7 @@ router.get("/find/:id", verifyJWT, getVideo);
 router.post("/view/:id", verifyJWT, addView);
 router.post("/trend", trend);
 router.get("/random", rand);
-router.get("/sub", sub);
+router.get("/sub", verifyJWT, sub);
 router.get("/tags", tags);
 router.get("/search", search);
 export default router;
