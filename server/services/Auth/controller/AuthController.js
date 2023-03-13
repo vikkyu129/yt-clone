@@ -1,16 +1,15 @@
 import User from "../../../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
-// use redis here to store the refresh tokens
-let refreshTokensDb = [];
+import client from "../../Redis/redis-client.js";
 
 export async function refresh(req, res, next) {
   const { refresh_token: token } = req.cookies;
   if (!token) {
     return res.status(401).send("Invalid Token");
   }
-  if (!refreshTokensDb.includes(token)) {
+  const isPresent = await client.get(String(token));
+  if (!isPresent) {
     return res.status(401).send("Invalid Token");
   }
   jwt.verify(token, process.env.REFRESH_JWT_SECRET_TOKEN, (err, user) => {
@@ -31,7 +30,7 @@ export async function signout(req, res, next) {
   if (!token) {
     return res.sendStatus(403);
   }
-  refreshTokensDb = refreshTokensDb.filter((tokenInDb) => tokenInDb !== token);
+  await client.del(String(token));
   res.cookie("access_token", "", {
     httpOnly: true,
   });
@@ -58,6 +57,7 @@ export async function signup(req, res, next) {
 }
 
 export async function signin(req, res, next) {
+  console.log("signin");
   try {
     const user = await User.findOne({ name: req.body.name });
     if (!user) {
@@ -73,6 +73,15 @@ export async function signin(req, res, next) {
       process.env.REFRESH_JWT_SECRET_TOKEN
     );
     refreshTokensDb.push(refreshToken);
+    console.log(refreshToken);
+    try {
+      await client.set(String(refreshToken), String(user._id), {
+        EX: 60 * 15,
+      });
+    } catch (e) {
+      console.log(e);
+      return res.sendStatus(501).send(e);
+    }
     const { password, ...filteredUser } = user._doc;
     res.cookie("access_token", accessToken, {
       httpOnly: true,
@@ -80,7 +89,7 @@ export async function signin(req, res, next) {
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
     });
-    res.status(200).json(filteredUser);
+    return res.status(200).json(filteredUser);
   } catch (e) {
     return res.status(503).send(e);
   }

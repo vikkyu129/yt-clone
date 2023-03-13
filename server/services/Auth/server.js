@@ -2,13 +2,13 @@ import express, { json } from "express";
 import cookieParser from "cookie-parser";
 import authRoute from "./routes/auth.js";
 
-import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config({
   path: "../../.env",
 });
+
 const connect = () => {};
 mongoose.connect(process.env.MONGO_CONNECTION_STRING).then((r) => {
   console.log("Connection to Mongo Successful.");
