@@ -35,16 +35,15 @@ const Item = styled.div`
   align-items: center;
   gap: 1rem;
   cursor: pointer;
-  padding: 0.15rem 0rem;
+  padding: 0.15rem 0;
 `;
 
 const Logo = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: normal;
-  font-family: "Arial Black", sans-serif;
-  font-size: 1rem;
+  font-weight: bold;
+  font-size: 2rem;
   margin-bottom: 1rem;
 `;
 
@@ -54,10 +53,10 @@ const Img = styled.img`
 
 const Hr = styled.hr`
   border: 0.05rem solid ${({ theme }) => theme.soft};
-  margin: 1rem 0rem;
+  margin: 1rem 0;
 `;
 const LoginText = styled.div``;
-const LoginButton = styled.button`
+const Button = styled.button`
   cursor: pointer;
   padding: 0.5rem 1rem;
   background-color: transparent;
@@ -101,10 +100,10 @@ const SideMenu = () => {
         </Item>
         <Hr></Hr>
         <LoginText>Sign in, Please.</LoginText>
-        <LoginButton>
+        <Button>
           <AccountCircleOutlinedIcon />
           SIGN IN
-        </LoginButton>
+        </Button>
         <Hr></Hr>
         <Item>
           <LibraryMusicOutlinedIcon />

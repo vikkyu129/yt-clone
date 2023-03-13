@@ -6,6 +6,8 @@ import { darkTheme, lightTheme } from "./utils/Theme.jsx";
 
 const AppContainer = styled.div`
   display: flex;
+  font-family: Calibri, serif;
+  font-size: large;
 `;
 const MainWrapper = styled.div``;
 const MainContainer = styled.div`
