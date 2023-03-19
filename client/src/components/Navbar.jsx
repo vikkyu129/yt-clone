@@ -28,6 +28,7 @@ const Search = styled.div`
   justify-content: space-between;
   border: 1px solid #ccc;
   border-radius: 3px;
+  cursor: pointer;
 `;
 const Input = styled.input`
   border: none;

@@ -17,6 +17,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import SettingsBrightnessOutlinedIcon from "@mui/icons-material/SettingsBrightnessOutlined";
+import { Link } from "react-router-dom";
 const Container = styled.div`
   flex: 1;
   background-color: ${({ theme }) => theme.bg};
@@ -48,7 +49,7 @@ const Logo = styled.div`
 `;
 
 const Img = styled.img`
-  height: 1rem;
+  height: 1.6rem;
 `;
 
 const Hr = styled.hr`
@@ -74,10 +75,12 @@ const SideMenu = () => {
   return (
     <Container>
       <Wrapper>
-        <Logo>
-          <Img src={YouTube} />
-          YouTube
-        </Logo>
+        <Link to={"/"} style={{ textDecoration: "none", color: "inherit" }}>
+          <Logo>
+            <Img src={YouTube} />
+            YouTube
+          </Logo>
+        </Link>
         <Item>
           <HomeIcon /> Home
         </Item>
